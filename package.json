@@ -1,0 +1,28 @@
+{
+  "name": "e-shop",
+  "version": "1.0.0",
+  "description": "Backend for the E-Shop application using Node.js, Express.js, and MongoDB.",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "test": "echo \"No tests yet\" && exit 1",
+    "lint": "eslint .",
+    "build": "echo \"No build step necessary for this project.\""
+  },
+  "keywords": [
+    "nodejs",
+    "express",
+    "mongodb",
+    "backend",
+    "eshop"
+  ],
+  "author": "Sukhrob Abdullaev",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "mongoose": "^8.8.4",
+    "morgan": "^1.10.0"
+  }
+}
