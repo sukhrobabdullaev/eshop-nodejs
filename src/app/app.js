@@ -26,8 +26,10 @@ app.use(morgan("tiny"));
 
 // Routes
 const productRoutes = require("../routes/product.routes.js");
+const categoryRoutes = require("../routes/category.routes.js");
 
 // Use routes with the API_URL as the base path
 app.use(`${API_URL}/products`, productRoutes);
+app.use(`${API_URL}/categories`, categoryRoutes);
 
 module.exports = app;
