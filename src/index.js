@@ -1,6 +1,5 @@
 const app = require("./app/app");
 const { connectToDatabase } = require("./config/database");
-
 require("dotenv").config(); // Load environment variables
 
 const PORT = process.env.PORT || 3000;

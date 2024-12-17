@@ -1,10 +1,39 @@
-const Product = require("../models/product.model");
+const Product = require("../models/product.model.js");
 
-exports.getProducts = async (req, res) => {
-  res.send("HEY HOW YOU DOING?");
+getProducts = async (req, res) => {
+  try {
+    const productList = await Product.find();
+    if (!productList || productList.length === 0) {
+      res.status(404).json({ message: "Products Not Found", success: false });
+    }
+    res.status(200).json(productList);
+  } catch (err) {
+    res.status(500).json({ error: err.message, success: false });
+  }
+};
+getOne = async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+      res.status(404).json({ message: "Products Not Found", success: false });
+    }
+    res.status(200).json(product);
+  } catch (err) {
+    res.status(500).json({ error: err.message, success: false });
+  }
 };
 
-exports.createProduct = async (req, res) => {
+createProduct = async (req, res) => {
+  if (
+    !req.body.name ||
+    !req.body.image ||
+    req.body.countInStock === undefined
+  ) {
+    return res
+      .status(400)
+      .json({ message: "Missing required fields", success: false });
+  }
+
   const product = new Product({
     name: req.body.name,
     image: req.body.image,
@@ -18,3 +47,5 @@ exports.createProduct = async (req, res) => {
     res.status(500).json({ error: err.message, success: false });
   }
 };
+
+module.exports = { getProducts, createProduct, getOne };
