@@ -8,9 +8,12 @@ function authJwt() {
     secret,
     algorithms: ["HS256"],
     isRevoked: async (req, token) => {
-      if (!token.payload.isAdmin) {
-        return true; // Revoke the token for non-admin users
-      }
+          // Check if the user is trying to access the orders endpoint
+          const isOrdersEndpoint = req.originalUrl.startsWith(`${api}/orders`);
+
+          if (!token.payload.isAdmin && !isOrdersEndpoint) {
+            return true; // Revoke the token for non-admin users accessing non-orders endpoints
+          }
       return false; // Allow the token
     },
   }).unless({

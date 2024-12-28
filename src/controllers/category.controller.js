@@ -1,6 +1,6 @@
 const Category = require("../models/category.model.js");
 
-getCategories = async (req, res) => {
+const getCategories = async (req, res) => {
   try {
     const categoryList = await Category.find();
     if (!categoryList || categoryList.length === 0) {

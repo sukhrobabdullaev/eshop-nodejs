@@ -30,6 +30,7 @@ app.use(errorHandler)
 const productRoutes = require("../routes/product.routes.js");
 const categoryRoutes = require("../routes/category.routes.js");
 const userRoutes = require("../routes/user.routes.js");
+const orderRoutes = require("../routes/order.routes.js");
 
 // app.use(verifyToken);
 
@@ -37,6 +38,7 @@ const userRoutes = require("../routes/user.routes.js");
 app.use(`${API_URL}/products`, productRoutes);
 app.use(`${API_URL}/categories`, categoryRoutes);
 app.use(`${API_URL}/users`, userRoutes);
+app.use(`${API_URL}/orders`, orderRoutes);
 
 
 module.exports = app;

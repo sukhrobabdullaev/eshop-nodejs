@@ -2,7 +2,7 @@ const { default: mongoose } = require("mongoose");
 const Category = require("../models/category.model.js");
 const Product = require("../models/product.model.js");
 
-getProducts = async (req, res) => {
+const getProducts = async (req, res) => {
   try {
     const productList = await Product.find().select("name image");
 
@@ -15,7 +15,7 @@ getProducts = async (req, res) => {
   }
 };
 
-createProduct = async (req, res) => {
+const createProduct = async (req, res) => {
   try {
     const { category } = req.body;
 
