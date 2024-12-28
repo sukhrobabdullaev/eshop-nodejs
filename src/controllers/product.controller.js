@@ -2,6 +2,7 @@ const { default: mongoose } = require("mongoose");
 const Category = require("../models/category.model.js");
 const Product = require("../models/product.model.js");
 
+
 const getProducts = async (req, res) => {
   try {
     const productList = await Product.find().select("name image");
@@ -32,33 +33,23 @@ const createProduct = async (req, res) => {
         .json({ message: "Invalid Category", success: false });
     }
 
-    const {
-      name,
-      description,
-      richDescription,
-      image,
-      images,
-      brand,
-      price,
-      countInStock,
-      rating,
-      numReviews,
-      isFeatured,
-    } = req.body;
-
+    const fileName = req.file.filename;
+    const baseUrl = `${req.protocol}://${req.get("host")}/public/uploads/`;
+    console.log(baseUrl, fileName);
+    
     const product = new Product({
-      name,
-      description,
-      richDescription,
-      image,
-      images,
-      brand,
-      price,
-      category,
-      countInStock,
-      rating,
-      numReviews,
-      isFeatured,
+      name: req.body.name,
+      description: req.body.description,
+      richDescription: req.body.richDescription,
+      image: `${baseUrl}${fileName}`,
+      images: req.body.images,
+      brand: req.body.brand,
+      price: req.body.price,
+      category: req.body.category,
+      countInStock: req.body.countInStock,
+      rating: req.body.rating,
+      numReviews: req.body.numReviews,
+      isFeatured: req.body.isFeatured,
     });
 
     const createdProduct = await product.save();

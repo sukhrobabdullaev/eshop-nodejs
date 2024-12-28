@@ -10,13 +10,14 @@ const {
   getLimitedFeatured,
   getProductsByCategory,
 } = require("../controllers/product.controller");
+const uploadOptions = require("../helpers/upload-config");
 
 const router = express.Router();
 
 // Routes
 router.get("/", getProducts);
 router.get("/:id", getOne);
-router.post("/create", createProduct);
+router.post("/create", uploadOptions.single('image'), createProduct);
 router.put("/update/:id", updateProduct);
 router.delete("/delete/:id", deleteProduct);
 
