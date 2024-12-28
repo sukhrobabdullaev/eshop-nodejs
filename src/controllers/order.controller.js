@@ -164,7 +164,33 @@ const getCount = async (req, res) => {
     } catch (err) {
       res.status(500).json({ error: err.message, success: false });
     }
+};
+  
+const getUsersOrders = async (req, res) => {
+    try {
+      const userOrderList = await Order.find({user: req.params.userId}).populate("user", "name email").populate({
+        path: "orderItems",
+        populate: {
+          path: "product",
+          populate: "category",
+        }
+      }).sort({
+        dateOrdered: -1,
+      });
+  
+      if (!userOrderList || userOrderList.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: "Orders Not Found",
+        });
+      }
+  
+      res.status(200).json(userOrderList);
+    } catch (err) {
+      res.status(500).json({ error: err.message, success: false });
+    }
   };
+
   
 module.exports = {
   getOrders,
@@ -173,5 +199,6 @@ module.exports = {
   updateOrder,
   getOrderById,
   getTotalSales,
-  getCount
+  getCount,
+  getUsersOrders
 };
