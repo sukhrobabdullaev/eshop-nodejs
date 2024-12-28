@@ -37,8 +37,18 @@ const createOrder = async (req, res) => {
             })
         );
 
-        console.log(orderItemsIds);
-    const newOrder = new Order(
+     const totalPrices = await Promise.all(
+        orderItemsIds.map(async (orderItem) => {
+          const orderItemDetails = await OrderItem.findById(orderItem).populate(
+            "product",
+            "price")
+          return orderItemDetails.quantity * orderItemDetails.product.price;
+        })
+    )
+
+    const totalPrice = totalPrices.reduce((a, b) => a + b, 0);
+    
+     const newOrder = new Order(
         {
             orderItems: orderItemsIds,
             shippingAddress1: req.body.shippingAddress1,
@@ -48,7 +58,7 @@ const createOrder = async (req, res) => {
             country: req.body.country,
             phone: req.body.phone,
             status: req.body.status,
-            totalPrice: req.body.totalPrice,
+            totalPrice: totalPrice,
             user: req.body.user
         }
     );
@@ -95,7 +105,7 @@ const updateOrder = async (req, res) => {
         .status(404)
         .json({ success: false, message: "Order not found" });
     }
-    
+
     res.status(200).json({
       success: true,
       message: "Order updated successfully",
