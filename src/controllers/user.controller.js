@@ -67,6 +67,7 @@ const login = async (req, res) => {
       const token = jwt.sign(
         {
           userId: user.id,
+          isAdmin: user.isAdmin,
         },
         process.env.JWT_SECRET,
         { expiresIn: "1d" }
@@ -83,4 +84,27 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { getUsers, createUser, getUserById, login };
+const register = async (req, res) => {
+  const user = new User({
+    name: req.body.name,
+    email: req.body.email,
+    passwordHash: bcrypt.hashSync(req.body.password, 10),
+    phone: req.body.phone,
+    isAdmin: req.body.isAdmin,
+    street: req.body.street,
+    apartment: req.body.apartment,
+    zip: req.body.zip,
+    city: req.body.city,
+    country: req.body.country,
+  });
+
+  try {
+    const createdUser = await user.save();
+    res.status(201).json(createdUser);
+  } catch (err) { 
+    res.status(500).json({ error: err.message, success: false });
+  }
+};
+
+
+module.exports = { getUsers, createUser, getUserById, login, register }

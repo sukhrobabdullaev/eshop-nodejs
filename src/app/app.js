@@ -1,7 +1,9 @@
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
-const verifyToken = require("../middlewares/authMiddleware.js");
+// const verifyToken = require("../middlewares/authMiddleware.js");
+const authJwt = require("../helpers/jwt.js");
+const errorHandler = require("../helpers/error-handler.js");
 
 require("dotenv").config(); // Load environment variables
 
@@ -21,17 +23,20 @@ app.options("*", cors(corsOptions)); // Handle preflight requests globally
 // Middleware
 app.use(express.json());
 app.use(morgan("tiny"));
+app.use(authJwt())
+app.use(errorHandler)
 
 // Routes
 const productRoutes = require("../routes/product.routes.js");
 const categoryRoutes = require("../routes/category.routes.js");
 const userRoutes = require("../routes/user.routes.js");
 
-app.use(verifyToken);
+// app.use(verifyToken);
 
 // Use routes with the API_URL as the base path
 app.use(`${API_URL}/products`, productRoutes);
 app.use(`${API_URL}/categories`, categoryRoutes);
 app.use(`${API_URL}/users`, userRoutes);
+
 
 module.exports = app;
