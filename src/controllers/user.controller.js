@@ -72,9 +72,9 @@ const login = async (req, res) => {
         process.env.JWT_SECRET,
         { expiresIn: "1d" }
       );
-      return res.status(200).send({
+      return res.status(201).send({
         message: "User Authenticated",
-        user: { email: user.email, name: user.name, token: token }, // Customize user object as needed
+        user: { email: user.email, name: user.name, token: token },
       });
     } else {
       res.status(400).send("Password is wrong!");

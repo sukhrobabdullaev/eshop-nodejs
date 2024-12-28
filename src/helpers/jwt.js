@@ -1,36 +1,37 @@
-const {expressjwt}  = require("express-jwt");
+const { expressjwt } = require("express-jwt");
 
 function authJwt() {
   const secret = process.env.JWT_SECRET;
-  const api_url = process.env.API_URL;
+  const api=process.env.API_URL
 
   return expressjwt({
     secret,
     algorithms: ["HS256"],
     isRevoked: async (req, token) => {
-      // Check if the token payload indicates the user is not an admin
       if (!token.payload.isAdmin) {
-          return true; // Revoke the token
+        return true; // Revoke the token for non-admin users
       }
       return false; // Allow the token
-  },
+    },
   }).unless({
     path: [
-      { url: /\/api\/v1\/products\/(.*)/, methods: ["GET","OPTIONS"] },
-      { url: /\/api\/v1\/categories\/(.*)/, methods: ["GET","OPTIONS"] },
-      { url: `${api_url}/users/login`, methods: ["POST"] },
-      { url: `${api_url}/users/register`, methods: ["POST"] },
+      // Make all GET requests to products/(.*) public
+      { url: /\/api\/v1\/products\/(.*)/, methods: ["GET", "OPTIONS"] },
+      // Make all GET requests to categories/(.*) public
+      { url: /\/api\/v1\/categories\/(.*)/, methods: ["GET", "OPTIONS"] },
+      // Allow login and register endpoints
+      { url: `${api}/users/login` },
+      { url: `${api}/users/register`},
     ],
   });
 }
 
-async function isRevoked(req, payload, done) {
-  console.log(payload);
-  if (!payload.isAdmin) {
-    done(null, true);
-  } 
-  done(null, false);
-}
-
+// async function isRevoked(req, payload, done) {
+//   if (!payload.isAdmin) {
+//     done(null, true);
+//   } else {
+//     done(null, false);
+//   }
+// }
 
 module.exports = authJwt;
