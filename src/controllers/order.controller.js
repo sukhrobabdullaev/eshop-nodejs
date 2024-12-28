@@ -6,11 +6,7 @@ const getOrders = async (req, res) => {
     const orderList = await Order.find().populate({
         path: "user",
         select: "name email",
-        path: "orderItems",
-        populate: {
-          path: "product",
-          populate: "category",
-        },  
+        
     }).sort({
       dateOrdered: -1,
     });
@@ -88,14 +84,18 @@ const updateOrder = async (req, res) => {
   try {    
     const updatedOrder = await Order.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      {
+        status: req.body.status,
+      },
       { new: true }
     );
+
     if (!updatedOrder) {
       return res
         .status(404)
         .json({ success: false, message: "Order not found" });
     }
+    
     res.status(200).json({
       success: true,
       message: "Order updated successfully",
