@@ -139,10 +139,39 @@ const getOrderById = async (req, res) => {
   }
 };
 
+const getTotalSales=async (req, res) => {
+  try {
+    const totalSales = await Order.aggregate([
+      { $group: { _id: null, totalSales: { $sum: "$totalPrice" } } },
+    ]);
+    if (!totalSales) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Order not found" });
+    }
+    res.status(200).json({totalSales: totalSales.pop().totalSales})
+  } catch (err) {
+    res.status(500).json({ error: err.message, success: false });
+  }
+};
+
+
+const getCount = async (req, res) => {
+    try {
+      const orderCount = await Order.countDocuments({});
+  
+      res.status(200).json({ count: orderCount });
+    } catch (err) {
+      res.status(500).json({ error: err.message, success: false });
+    }
+  };
+  
 module.exports = {
   getOrders,
   createOrder,
   deleteOrder,
   updateOrder,
   getOrderById,
+  getTotalSales,
+  getCount
 };
