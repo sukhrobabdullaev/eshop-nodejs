@@ -9,6 +9,7 @@ const {
   getFeatured,
   getLimitedFeatured,
   getProductsByCategory,
+  updateGalleryImages
 } = require("../controllers/product.controller");
 const uploadOptions = require("../helpers/upload-config");
 
@@ -25,5 +26,6 @@ router.get("/get/count", getCount);
 router.get("/get/featured", getFeatured);
 router.get("/get/featured?limit=count", getLimitedFeatured);
 router.get("/get/filterbycategory", getProductsByCategory);
+router.put("/gallery-images/:id",uploadOptions.array('images',10), updateGalleryImages);
 
 module.exports = router;

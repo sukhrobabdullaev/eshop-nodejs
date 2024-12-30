@@ -160,7 +160,7 @@ const deleteProduct = async (req, res) => {
   }
 };
 
-getOne = async (req, res) => {
+const getOne = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id).populate("category");
 
@@ -174,7 +174,7 @@ getOne = async (req, res) => {
   }
 };
 
-getCount = async (req, res) => {
+const getCount = async (req, res) => {
   try {
     const productCount = await Product.countDocuments({});
 
@@ -184,7 +184,7 @@ getCount = async (req, res) => {
   }
 };
 
-getFeatured = async (req, res) => {
+const getFeatured = async (req, res) => {
   try {
     const featuredProducts = await Product.find({ isFeatured: true });
 
@@ -194,7 +194,7 @@ getFeatured = async (req, res) => {
   }
 };
 
-getLimitedFeatured = async (req, res) => {
+const getLimitedFeatured = async (req, res) => {
   try {
     // Parse the limit from query parameters, default to 5 if not provided
     const limit = parseInt(req.query.limit) || 5;
@@ -210,7 +210,7 @@ getLimitedFeatured = async (req, res) => {
   }
 };
 
-getProductsByCategory = async (req, res) => {
+const getProductsByCategory = async (req, res) => {
   try {
     let filter = {};
 
@@ -226,6 +226,47 @@ getProductsByCategory = async (req, res) => {
   }
 };
 
+const updateGalleryImages = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { images } = req.body;
+
+    if (!mongoose.isValidObjectId(id)) {
+      return res
+        .status(400)
+        .json({ message: "Invalid Product ID format", success: false });
+    }
+
+    const files=req.files
+    let imagesPath = []
+
+    const baseUrl = `${req.protocol}://${req.get("host")}/public/uploads/`;
+
+    if (files) {
+      files.map((file) => {
+        const fileName = file.filename;
+        imagesPath.push(`${baseUrl}${fileName}`);
+      });
+    }
+
+    const updatedProduct = await Product.findByIdAndUpdate(
+      id,    
+      { images: imagesPath },
+      { new: true, runValidators: true } // `new: true` returns the updated document
+    );
+
+    if (!updatedProduct) {    
+      return res
+        .status(404)
+        .json({ success: false, message: "Product not found" });
+    }        
+
+    res.status(200).json({ success: true, product: updatedProduct });
+  } catch (err) {
+    res.status(500).json({ error: err.message, success: false });
+  }
+}
+
 module.exports = {
   getProducts,
   createProduct,
@@ -236,4 +277,5 @@ module.exports = {
   getFeatured,
   getLimitedFeatured,
   getProductsByCategory,
+  updateGalleryImages
 };
