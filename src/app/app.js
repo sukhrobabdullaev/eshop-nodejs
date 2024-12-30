@@ -4,6 +4,7 @@ const cors = require("cors");
 // const verifyToken = require("../middlewares/authMiddleware.js");
 const authJwt = require("../helpers/jwt.js");
 const errorHandler = require("../helpers/error-handler.js");
+const path = require('path');
 
 require("dotenv").config(); // Load environment variables
 
@@ -25,6 +26,8 @@ app.use(express.json());
 app.use(morgan("tiny"));
 app.use(authJwt())
 app.use(errorHandler)
+app.use('/public/uploads', express.static(path.join(__dirname, '/public/uploads')));
+
 
 // Routes
 const productRoutes = require("../routes/product.routes.js");

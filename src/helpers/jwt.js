@@ -18,8 +18,10 @@ function authJwt() {
     },
   }).unless({
     path: [
+      // Make all GET requestts to /public/uploads/(.*) public
+      { url: /\/public\/uploads\/(.*)/, methods: ["GET", "OPTIONS"] },
       // Make all GET requests to products/(.*) public
-      { url: /\/api\/v1\/products\/(.*)/, methods: ["GET", "OPTIONS"] },
+      { url: /\/api\/v1\/products(.*)/, methods: ["GET", "OPTIONS"] },
       // Make all GET requests to categories/(.*) public
       { url: /\/api\/v1\/categories\/(.*)/, methods: ["GET", "OPTIONS"] },
       // Allow login and register endpoints
