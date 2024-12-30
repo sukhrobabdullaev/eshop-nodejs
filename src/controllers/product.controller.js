@@ -32,11 +32,14 @@ const createProduct = async (req, res) => {
         .status(400)
         .json({ message: "Invalid Category", success: false });
     }
+    const file=req.file
+    if (!file) {
+      return res.status(400).json({ message: "No file uploaded", success: false });
+    }
 
     const fileName = req.file.filename;
     const baseUrl = `${req.protocol}://${req.get("host")}/public/uploads/`;
-    console.log(baseUrl, fileName);
-    
+
     const product = new Product({
       name: req.body.name,
       description: req.body.description,
@@ -62,6 +65,8 @@ const createProduct = async (req, res) => {
 const updateProduct = async (req, res) => {
   try {
     const { category } = req.body;
+    const { id } = req.params;
+
     if (!mongoose.Types.ObjectId.isValid(category)) {
       return res
         .status(400)
@@ -75,34 +80,42 @@ const updateProduct = async (req, res) => {
         .json({ message: "Invalid Category", success: false });
     }
 
-    const { id } = req.params;
-    const {
-      name,
-      description,
-      richDescription,
-      image,
-      images,
-      brand,
-      price,
-      countInStock,
-      rating,
-      numReviews,
-      isFeatured,
-    } = req.body;
+    const product=await Product.findById(id);
+    if (!product) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Product not found" });
+    }
+    const file=req.file
+    
+    if (!file) {
+      return res.status(400).json({ message: "No file uploaded", success: false });
+    }
+
+    let imagePath;
+    if(file) {
+      const fileName = req.file.filename;
+      const baseUrl = `${req.protocol}://${req.get("host")}/public/uploads/`;
+      imagePath = `${baseUrl}${fileName}`;
+    } else {
+      imagePath = product.image;
+    }
+
     const updatedProduct = await Product.findByIdAndUpdate(
       id,
       {
-        name,
-        description,
-        richDescription,
-        image,
-        images,
-        brand,
-        price,
-        countInStock,
-        rating,
-        numReviews,
-        isFeatured,
+        name: req.body.name,
+        description: req.body.description,
+        richDescription: req.body.richDescription,
+        image: imagePath,
+        images: req.body.images,
+        brand: req.body.brand,
+        price: req.body.price,
+        category: req.body.category,
+        countInStock: req.body.countInStock,
+        rating: req.body.rating,
+        numReviews: req.body.numReviews,
+        isFeatured: req.body.isFeatured,
       },
       { new: true, runValidators: true } // `new: true` returns the updated document
     );
